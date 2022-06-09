@@ -8,30 +8,23 @@ export class UserService {
         this.userRepository = new UserRepository();
     }
 
-
     public getAll = async () => {
-        const users = await this.userRepository.getAll()
-        return users;
+        return await this.userRepository.getAll();
     }
 
     public getById = async (id: number) => {
-        const users = await this.userRepository.getById(id)
-        return users;
+        return await this.userRepository.getById(id)
     }
 
     public create = async (user: User) => {
-        const newUser = await this.userRepository.create(user);
-        return newUser;
+        return await this.userRepository.create(user);
     }
 
     public update = async (user: User, id: number) => {
-        const updatedPost = await this.userRepository.update(id, user);
-        return updatedPost;
+        return await this.userRepository.update(id, user);
     }
 
     public delete = async (id: number) => {
-        const deletedPost = await this.userRepository.delete(id);
-        return deletedPost;
+        return await this.userRepository.delete(id);
     }
-
 }

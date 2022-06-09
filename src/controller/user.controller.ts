@@ -16,18 +16,18 @@ export class UserController {
     }
 
     public getAll = async (req: Request, res: Response) => {
-        const user = await this.userService.getAll();
         try {
-            res.send(this.responseHandler.format(user)).json();
+            const users = await this.userService.getAll();
+            res.send(this.responseHandler.format(users)).json();
         } catch (error) {
             res.sendStatus(500).send(this.responseHandler.formatError(error))
         }
     }
 
     public getById = async (req: Request, res: Response) => {
-        const id = req['params']['id'];
-        const users = await this.userService.getById(Number(id));
         try {
+            const id = req['params']['id'];
+            const users = await this.userService.getById(Number(id));
             res.send(this.responseHandler.format(users)).json();
         } catch (error) {
             res.sendStatus(500).send(this.responseHandler.formatError(error))
@@ -35,20 +35,21 @@ export class UserController {
     }
 
     public create = async (req: Request, res: Response) => {
-        const user = req['body'] as User;
-        const newUser = await this.userService.create(user);
         try {
-            res.send(this.responseHandler.format(newUser));
+            const userReq = req['body'] as User;
+            const user = await this.userService.create(userReq);
+            res.send(this.responseHandler.format(user));
         } catch (error) {
             res.sendStatus(500).send(this.responseHandler.formatError(error))
         }
     }
 
     public update = async (req: Request, res: Response) => {
-        const user = req['body'] as User;
+        const userReq = req['body'] as User;
         const id = req['params']['id'];
         try {
-            res.send(this.responseHandler.format(this.userService.update(user, Number(id))));
+            const user = await this.userService.update(userReq, Number(id));
+            res.send(this.responseHandler.format(user));
         } catch (error) {
             res.sendStatus(500).send(this.responseHandler.formatError(error))
         }
@@ -57,7 +58,8 @@ export class UserController {
     public delete = async (req: Request, res: Response) => {
         const id = req['params']['id'];
         try {
-            res.send(this.responseHandler.format(this.userService.delete(Number(id))));
+            const user = this.userService.delete(Number(id));
+            res.send(this.responseHandler.format(user));
         } catch (error) {
             res.sendStatus(500).send(this.responseHandler.formatError(error))
         }

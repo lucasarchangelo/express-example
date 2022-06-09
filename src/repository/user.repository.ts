@@ -1,57 +1,55 @@
-import pool from '../config/db-configuration'
 import { User } from '../models/User';
+import { RepositoryExecute } from './repository-execute';
 
 export class UserRepository {
+    private repositoryExecute = new RepositoryExecute();
+
     public async getAll() {
         try {
-            const client = await pool.connect();
             const sql = 'SELECT * FROM users';
-            const { rows } = await client.query(sql);
-            const users = rows;
-            client.release();
-            return users;
+            return await this.repositoryExecute.execute(sql);
         } catch (error) {
             console.log(error);
         }
     }
 
     public async getById(id: number) {
-        const client = await pool.connect();
-        const sql = 'SELECT * FROM users where id = $1';
-        const { rows } = await client.query(sql, [id]);
-        const users = rows;
-        client.release();
-        return users;
+        try {
+            const sql = 'SELECT * FROM users where id = $1';
+            return await this.repositoryExecute.execute(sql, [id]); 
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     public async create(userReq: User) {
         try {
-            const client = await pool.connect();
             const sql = 'INSERT INTO users(name, email, password) VALUES($1, $2, $3) RETURNING *';
-            const { rows } = await client.query(sql, [userReq.name, userReq.email, userReq.password]);
-            const user = rows[0];
-            client.release();
-            return user;
+            const user =  await this.repositoryExecute.execute(sql, [userReq.name, userReq.email, userReq.password]);
+            return user[0];
         } catch (error) {
             console.log(error)
         }
     }
 
     public async update(id: number, userReq: User) {
-        const client = await pool.connect();
-        const sql = 'UPDATE users SET name = $1, email = $2, password = $3 WHERE id = $4 RETURNING *';
-        const { rows } = await client.query(sql, [userReq.name, userReq.email, userReq.password, id]);
-        const user = rows[0];
-        client.release();
-        return user;
+        try {
+            const sql = 'UPDATE users SET name = $1, email = $2, password = $3 WHERE id = $4 RETURNING *';
+            const user = await this.repositoryExecute.execute(sql, [userReq.name, userReq.email, userReq.password, id]);
+            return user[0];
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     public async delete(id: number) {
-        const client = await pool.connect();
-        const sql = 'DELETE FROM users WHERE id = $1 RETURNING *';
-        const { rows } = await client.query(sql, [id]);
-        const users = rows;
-        client.release();
-        return users;
+        try {
+            const sql = 'DELETE FROM users WHERE id = $1 RETURNING *';
+            const user = await this.repositoryExecute.execute(sql,[id]);
+            return user[0];
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
