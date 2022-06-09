@@ -1,0 +1,1 @@
+docker run --name mygame -e POSTGRES_USER=mygame -e POSTGRES_PASSWORD=mygame -p 5432:5432 -d postgres
